@@ -1,4 +1,5 @@
 using TesteTecnico.Data;
+using TesteTecnico.Views;
 
 namespace TesteTecnico
 {
@@ -18,7 +19,7 @@ namespace TesteTecnico
             {
                 context.Database.EnsureCreated();
             } 
-            Application.Run(new Form1());
+            Application.Run(new FormPrincipal());   
         }
     }
 }
