@@ -21,6 +21,17 @@ namespace TesteTecnico.Services
                      .OrderBy(f => f.Nome)
                      .ToList();
         }
+
+        public List<Funcionario> ListarAtivos()
+        {
+            using var db = new TesteTecnicoContext();
+
+            return db.Funcionario
+                    .AsNoTracking()
+                    .Where(f => f.Situacao == 'A')
+                    .ToList();
+                        
+        }
         
         public (bool Ok, string Msg) Salvar(string nome, string cpf, int id = 0)
         {

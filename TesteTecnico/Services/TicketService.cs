@@ -24,7 +24,7 @@ namespace TesteTecnico.Services
 
         }
 
-        public(bool ok, string msg) Salvar(int quantidade,int funcionarioId, int id = 0)
+        public(bool Ok, string Msg) Salvar(int quantidade,int funcionarioId, int id = 0)
         {
 
             if (quantidade <= 0)
@@ -35,7 +35,9 @@ namespace TesteTecnico.Services
 
             using var db = new TesteTecnicoContext();
 
-            var funcionario = db.Ticket.Find(funcionarioId);
+
+
+            var funcionario = db.Funcionario.Find(funcionarioId);
 
             if (funcionario == null)
                 return (false, "Funcionario não encontrado");
