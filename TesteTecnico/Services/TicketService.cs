@@ -72,42 +72,54 @@ namespace TesteTecnico.Services
         {
             using var db = new TesteTecnicoContext();
 
-            var query = db.Ticket
-                          .AsNoTracking()
-                          .Include(t => t.Funcionario)
-                          .AsQueryable();
+            // 1. Monta a query base (sem Include para evitar que o EF tente fazer JOINs complexos antes do ToList)
+            var query = db.Ticket.AsNoTracking().AsQueryable();
 
-            if(funcionarioId.HasValue && funcionarioId.Value > 0)
+            // 2. Aplica os filtros
+            if (funcionarioId.HasValue && funcionarioId.Value > 0)
             {
-                query = query.Where(t => t.DataCriacao >= datainicio.Value.Date);
-
+                int id = funcionarioId.Value;
+                query = query.Where(t => t.FuncionarioId == id);
             }
 
-            if(datafim.HasValue)
+            if (datainicio.HasValue)
+            {
+                DateTime inicio = datainicio.Value.Date;
+                query = query.Where(t => t.DataCriacao >= inicio);
+            }
+
+            if (datafim.HasValue)
             {
                 var fimDoDia = datafim.Value.Date.AddDays(1).AddTicks(-1);
                 query = query.Where(t => t.DataCriacao <= fimDoDia);
             }
 
-            var itensagrupados = query
-                .GroupBy(t => t.Funcionario!.Nome)
+            // 3. Traz a lista de tickets para a memória do C# (Aqui a mágica acontece)
+            var ticketsFiltrados = query.ToList();
+
+            // 4. Como não usamos Include, precisamos buscar os nomes na memória. 
+            // Mas para isso, vamos pegar a lista de funcionários de uma vez.
+            var funcionarios = db.Funcionario.AsNoTracking().ToList();
+
+            // 5. Agrupa os dados e junta com os nomes
+            var itensagrupados = ticketsFiltrados
+                .GroupBy(t => t.FuncionarioId)
                 .Select(g => new RelatorioItem(
-                    g.Key,
-                    g.Count(),
-                    g.Sum(t => t.Quantidade)
-                    ))
+                    funcionarios.FirstOrDefault(f => f.Id == g.Key)?.Nome ?? "Desconhecido", // Pega o nome
+                    g.Count(), // Quantidade de registros
+                    g.Sum(t => t.Quantidade) // Soma dos tickets
+                ))
                 .OrderByDescending(i => i.TotalQuantidade)
                 .ToList();
 
             int totalGeral = itensagrupados.Sum(i => i.TotalQuantidade);
-
 
             return new RelatorioResultado(
                 datainicio ?? DateTime.MinValue,
                 datafim ?? DateTime.MaxValue,
                 totalGeral,
                 itensagrupados
-                );
+            );
         }
 
 
