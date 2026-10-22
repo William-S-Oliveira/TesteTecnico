@@ -16,7 +16,7 @@ namespace TesteTecnico.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite("Data Source=TesteTecninco.db");
+                optionsBuilder.UseSqlite("Data Source=TesteTecni    co.db");
             }
         }
 

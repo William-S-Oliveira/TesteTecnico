@@ -22,7 +22,7 @@ namespace TesteTecnico.Services
                      .ToList();
         }
         
-        public (bool ok, string msg) Salvar(string nome, string cpf, int id = 0)
+        public (bool Ok, string Msg) Salvar(string nome, string cpf, int id = 0)
         {
             if (string.IsNullOrWhiteSpace(nome))
                 return (false, "Um nome deve ser informar");
@@ -35,31 +35,47 @@ namespace TesteTecnico.Services
             using var db = new TesteTecnicoContext();
 
 
-            if(id == 0)
-            {
-                var novofuncionario = new Funcionario(nome, cpf);
-                db.Funcionario.Add(novofuncionario);
+            try {
+
+                if (id == 0)
+                {
+                    var novofuncionario = new Funcionario(nome, cpf);
+                    db.Funcionario.Add(novofuncionario);
+                }
+                else
+                {
+                    var funcionarioBanco = db.Funcionario.Find(id);
+
+                    if (funcionarioBanco == null)
+                        return (false, "Funcionario não encontrado");
+
+                    funcionarioBanco.Nome = nome;
+                    funcionarioBanco.CPF = cpf;
+                    funcionarioBanco.DataModificacao = DateTime.Now;
+
+                }
+
+                db.SaveChanges();
+
+                return (true, "Funcionario cadastrado com sucesso!  ");
+
             }
-            else
+            catch (Exception ex)
             {
-                var funcionarioBanco = db.Funcionario.Find(id);
+                if (ex.InnerException != null && ex.InnerException.Message.Contains("UNIQUE constraint failed: Funcionarios.CPF"))
+                {
+                    return (false, "Erro: Este CPF já está cadastrado no banco de dados.");
+                }
 
-                if (funcionarioBanco == null)
-                    return (false, "Funcionario não encontrado");
-
-                funcionarioBanco.Nome = nome;
-                funcionarioBanco.CPF = cpf;
-                funcionarioBanco.DataModificacao = DateTime.Now;
-
+                return (false, "Erro inesperado ao salvar: " + ex.Message);
             }
+                
 
-            db.SaveChanges();
-
-            return (true, "Funcionario cadastrado com sucesso!  ");
+           
 
         }
 
-        public (bool ok, string msg) AlterarSitucao(int id)
+        public (bool ok, string msg) AlterarSituacao(int id)
         {
             using var db = new TesteTecnicoContext();
 
