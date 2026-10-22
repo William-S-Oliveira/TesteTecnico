@@ -11,6 +11,7 @@ namespace TesteTecnico.Data
        public DbSet<Funcionario> Funcionario { get; set; }
        public DbSet<Ticket> Ticket { get; set; }
 
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
