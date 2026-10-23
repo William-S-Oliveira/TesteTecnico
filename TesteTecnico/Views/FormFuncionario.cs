@@ -13,7 +13,7 @@ namespace TesteTecnico.Views
     public partial class FormFuncionario : Form
     {
         private readonly FuncionarioService _service = new FuncionarioService();
-        private int _idEdicao = 0; // 0 significa que estamos criando um novo
+        private int _idEdicao = 0; 
 
         public FormFuncionario()
         {
@@ -95,7 +95,7 @@ namespace TesteTecnico.Views
             {
                 MessageBox.Show("Erro na tela: " + ex.Message, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            // Chama o Service passando os dados da tela (o service limpa a máscara do CPF)
+            
             
         }
 

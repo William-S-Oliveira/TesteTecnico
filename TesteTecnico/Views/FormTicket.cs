@@ -46,7 +46,7 @@ namespace TesteTecnico.Views
             gridTickets.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             gridTickets.AllowUserToAddRows = false;
 
-            // Esconde a coluna de navegação do EF Core para o grid não ficar poluído
+            // Esconde a coluna de navegação para o grid não ficar poluído
             if (gridTickets.Columns["Funcionario"] != null)
                 gridTickets.Columns["Funcionario"].Visible = false;
 
@@ -79,7 +79,7 @@ namespace TesteTecnico.Views
 
         private void btnSalvar_Click(object sender, EventArgs e)
         {
-            // 🔑 Pega o objeto Funcionario diretamente da lista
+            // Pega o objeto Funcionario diretamente da lista
             if (cmbFuncionario.SelectedItem is not Funcionario funcionarioSelecionado)
             {
                 MessageBox.Show("Selecione um funcionário.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);

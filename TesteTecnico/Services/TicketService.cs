@@ -68,14 +68,15 @@ namespace TesteTecnico.Services
 
         }
 
+
         public RelatorioResultado GerarRelatorio(DateTime? datainicio = null, DateTime? datafim = null, int? funcionarioId = null)
         {
             using var db = new TesteTecnicoContext();
 
-            // 1. Monta a query base (sem Include para evitar que o EF tente fazer JOINs complexos antes do ToList)
+            // Monta a query (sem Include pro  EF não tentar fazer JOINs complexos antes do ToList)
             var query = db.Ticket.AsNoTracking().AsQueryable();
 
-            // 2. Aplica os filtros
+            // Aplica os filtros
             if (funcionarioId.HasValue && funcionarioId.Value > 0)
             {
                 int id = funcionarioId.Value;
@@ -94,14 +95,13 @@ namespace TesteTecnico.Services
                 query = query.Where(t => t.DataCriacao <= fimDoDia);
             }
 
-            // 3. Traz a lista de tickets para a memória do C# (Aqui a mágica acontece)
+            // Salva a lista filtrada na memoria
             var ticketsFiltrados = query.ToList();
 
-            // 4. Como não usamos Include, precisamos buscar os nomes na memória. 
-            // Mas para isso, vamos pegar a lista de funcionários de uma vez.
+            // Faz a consulta na tabela de funcionarios para pegar o nome dos funcionários
             var funcionarios = db.Funcionario.AsNoTracking().ToList();
 
-            // 5. Agrupa os dados e junta com os nomes
+            // Agrupa as duas consultas
             var itensagrupados = ticketsFiltrados
                 .GroupBy(t => t.FuncionarioId)
                 .Select(g => new RelatorioItem(

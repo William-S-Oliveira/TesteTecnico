@@ -12,10 +12,9 @@ namespace TesteTecnico.Services
 
         public List<Funcionario> Listar()
         {
-            // Instanciando o Context (garanta que o using acima está correto)
+            // Instanciando o Context 
             using var db = new TesteTecnicoContext();
-
-            // Lembre-se: a propriedade DbSet chama-se "Funcionario" (singular)
+  
             return db.Funcionario
                      .AsNoTracking()
                      .OrderBy(f => f.Nome)

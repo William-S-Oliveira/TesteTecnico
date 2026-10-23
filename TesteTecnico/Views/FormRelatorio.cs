@@ -29,8 +29,8 @@ namespace TesteTecnico.Views
             // Puxa todos os funcionários do banco (para permitir relatórios de inativos também)
             var lista = _funcionarioService.Listar();
 
-            // Adiciona a opção "Todos" no topo da lista. 
-            // Criamos um funcionário "fake" com Id = 0 para representar essa opção.
+            
+            // Id = 0 é uma opção coringa para mostrar todos os funcionários.
             lista.Insert(0, new Funcionario { Id = 0, Nome = "(Todos os Funcionários)" });
 
             cmbFuncionario.DataSource = lista;
@@ -43,15 +43,15 @@ namespace TesteTecnico.Views
             DateTime? dataInicio = dtpInicio.Checked ? dtpInicio.Value.Date : (DateTime?)null;
             DateTime? dataFim = dtpFim.Checked ? dtpFim.Value.Date : (DateTime?)null;
 
-            // 2. Verifica o funcionário no ComboBox de forma segura
+            // Verifica o funcionário no ComboBox 
             int? filtroFuncionario = null;
 
             if (cmbFuncionario.SelectedValue is int id && id > 0)
             {
-                filtroFuncionario = id; // Atribuição corrigida aqui!
+                filtroFuncionario = id; 
             }
 
-            // 3. Validação básica de lógica de datas
+            //Validação básica de lógica de datas
             if (dataInicio.HasValue && dataFim.HasValue && dataInicio > dataFim)
             {
                 MessageBox.Show("A data de início não pode ser maior que a data final.", "Aviso", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -60,12 +60,12 @@ namespace TesteTecnico.Views
 
             try
             {
-                // 4. Chama o Service para fazer a pesquisa no banco
+                // Service faz a pesquisa no banco
                 var resultado = _ticketService.GerarRelatorio(dataInicio, dataFim, filtroFuncionario);
 
                 _ultimoResultado = resultado;
 
-                // 5. Exibe os dados no Grid
+                //  Exibe os dados no Grid
                 gridRelatorio.DataSource = null;
                 gridRelatorio.DataSource = resultado.Itens;
 
@@ -75,7 +75,7 @@ namespace TesteTecnico.Views
                 gridRelatorio.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
                 gridRelatorio.AllowUserToAddRows = false;
 
-                // Traduz os cabeçalhos das colunas para o usuário final
+                // nome das colunas para o usuário final
                 if (gridRelatorio.Columns["NomeFuncionario"] != null)
                     gridRelatorio.Columns["NomeFuncionario"].HeaderText = "Funcionário";
 
@@ -113,7 +113,7 @@ namespace TesteTecnico.Views
                 {
                     try
                     {
-                        // Criamos uma lista de strings para montar o arquivo
+                        // lista de strings para montar o arquivo
                         var linhas = new List<string>();
 
                         // Cabeçalho (separado por ponto e vírgula)
